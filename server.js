@@ -25,7 +25,7 @@ app.post('/chat', async (req, res) => {
     console.log('User message:', userMessage);
 
     try {
-        const response = await axios.post('http://213.130.144.157/api/generate', {
+        const response = await axios.post('http://213.130.144.157:11434/api/generate', {
             model: 'mistral:latest',
             prompt: userMessage,
             stream: false // Assuming you want the full response at once, not streamed
