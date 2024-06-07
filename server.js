@@ -39,6 +39,7 @@ app.post('/chat', async (req, res) => {
 // Define endpoint for chat
 app.post('/get_capital', async (req, res) => {
     const userMessage = req.body.message;
+    console.log(userMessage)
     try {
         const response = await countryCapital(userMessage)
         res.status(200).json({ message: response });
