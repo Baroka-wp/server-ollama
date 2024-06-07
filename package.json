@@ -2,6 +2,7 @@
   "name": "chatbot-vercel",
   "version": "1.0.0",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
@@ -11,16 +12,23 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@fastify/static": "^7.0.4",
     "@google/generative-ai": "^0.11.4",
+    "@langchain/community": "^0.2.9",
+    "@langchain/mistralai": "^0.0.24",
     "axios": "^1.7.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "fastify": "^4.27.0",
+    "langchain": "^0.2.5",
     "node-fetch": "^3.3.2",
     "node-fetch-commonjs": "^3.3.2",
     "ollama": "^0.5.1",
-    "openai": "^4.47.1"
+    "openai": "^4.47.1",
+    "path": "^0.12.7",
+    "pg": "^8.12.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

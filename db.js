@@ -1,4 +1,4 @@
-const galleryItems = [
+export const galleryItems = [
     {
         id: 1,
         image: './assets/image1.jpg',
@@ -49,5 +49,3 @@ const galleryItems = [
     }
 ];
 
-
-module.exports = galleryItems;

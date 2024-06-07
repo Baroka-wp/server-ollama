@@ -1,22 +1,21 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const axios = require('axios');
-const cors = require('cors'); // Import cors
-const dotenv = require('dotenv');
-const OpenAI = require('openai');
-const galleryItems = require('./db.js');
-const {ollamaChat, countryCapital} = require('./lib/chat.js')
+import express from 'express';
+import axios from 'axios';
+import cors from 'cors'; // Import cors
+import { config } from 'dotenv';
+import OpenAI from 'openai';
+import {galleryItems} from './db.js';
+import { ollamaChat, countryCapital, ollamaLang, ollama_functions, ollamaChain} from './lib/chat.js';
 
-const { default: ollama } = require('ollama');
+import { default as ollama } from 'ollama';
 
-dotenv.config();
+config();
 const app = express();
 const port = process.env.PORT || 3001;
 
 
 app.use(cors()); // Use cors middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+// app.use(urlencoded({ extended: true }));
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY});
@@ -24,11 +23,23 @@ const openai = new OpenAI({
 
 // Define endpoint for chat
 app.post('/chat', async (req, res) => {
-    const userMessage = req.body.message;
-    console.log(userMessage)
+    const userMessage = req.body.message
     try {
-        const response = await ollamaChat(userMessage)
+        const response = await ollama_functions(userMessage)
         res.status(200).json({ message: response });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'An error occurred' });
+    }
+});
+
+
+// Define endpoint for chat
+app.post('/langchat', async (req, res) => {
+    const userMessage = req.body.message
+    try {
+        const response = await ollamaChain(userMessage)
+        res.status(200).json({ response });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'An error occurred' });
