@@ -58,13 +58,14 @@ app.post('/langchat', async (req, res) => {
 
     let history = []
     if(!user.rows.length) {
+        const chat_node = "start"
         const messges = [{
             role: "human",
             content: message
         }];
         await pool.query(
-            `INSERT INTO history (user_id, session, message) VALUES ($1, $2, $3)`,
-            [user_id, session, messges]
+            `INSERT INTO history (user_id, session, message,chat_node ) VALUES ($1, $2, $3, $4)`,
+            [user_id, session, messges, chat_node]
         );
     } else {
         history = user.rows[0].message
@@ -73,24 +74,7 @@ app.post('/langchat', async (req, res) => {
     console.log(history)
 
     try {
-        const response = await ollamaChain(message, history)
-
-        history.push(
-            {
-                role: "human",
-                content: message
-            },
-            {
-                role: "system",
-                content: response
-            }
-        );
-
-        await pool.query(
-            `UPDATE history SET message = $1 WHERE user_id = $2 AND session = $3`,
-            [history, user_id, session]
-        );
-
+        const response = await ollama_functions(message,history,user_id, session)
 
         res.status(200).json({ response });
     } catch (error) {
