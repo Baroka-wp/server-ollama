@@ -1,12 +1,12 @@
 import express from 'express';
 import axios from 'axios';
+// import pgvector from "pgvector/pg";
+import pool from './configs/db.js';
 import cors from 'cors'; // Import cors
 import { config } from 'dotenv';
 import OpenAI from 'openai';
 import {galleryItems} from './db.js';
 import { ollamaChat, countryCapital, ollamaLang, ollama_functions, ollamaChain} from './lib/chat.js';
-
-import { default as ollama } from 'ollama';
 
 config();
 const app = express();
@@ -36,9 +36,50 @@ app.post('/chat', async (req, res) => {
 
 // Define endpoint for chat
 app.post('/langchat', async (req, res) => {
-    const userMessage = req.body.message
+
+    const {user_id, session, message} = req.body;
+    
+    const user = await pool.query(
+        `SELECT message FROM history WHERE user_id = $1 AND session = $2`,
+        [user_id, session]
+    );
+
+    let history = []
+    if(!user.rows.length) {
+        const messges = [{
+            role: "human",
+            content: message
+        }];
+        await pool.query(
+            `INSERT INTO history (user_id, session, message) VALUES ($1, $2, $3)`,
+            [user_id, session, messges]
+        );
+    } else {
+        history = user.rows[0].message
+    }
+
+    console.log(history)
+
     try {
-        const response = await ollamaChain(userMessage)
+        const response = await ollamaChain(message, history)
+
+        history.push(
+            {
+                role: "human",
+                content: message
+            },
+            {
+                role: "system",
+                content: response
+            }
+        );
+
+        await pool.query(
+            `UPDATE history SET message = $1 WHERE user_id = $2 AND session = $3`,
+            [history, user_id, session]
+        );
+
+
         res.status(200).json({ response });
     } catch (error) {
         console.error('Error:', error);
