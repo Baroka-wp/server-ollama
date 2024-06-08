@@ -6,7 +6,7 @@ const { Pool } = postgresql;
 const pool = new Pool({
   user: process.env.DATABSE_USER || 'postgres',
   database: process.env.DATABASE_NAME || 'estateGPT',
-  password: process.env.DATABASE_PASSWORD || '',
+  password: '',
   host: process.env.DATABASE_HOST || 'localhost',
   port: 5432
 });
