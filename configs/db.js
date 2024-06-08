@@ -1,12 +1,14 @@
 import postgresql from 'pg';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const { Pool } = postgresql;
 
-// NOTE: PostgreSQL creates a superuser by default on localhost using the OS username.
 const pool = new Pool({
-  user: process.env.DATABSE_USER || 'postgres',
+  user: process.env.DATABASE_USER || 'postgres',
   database: process.env.DATABASE_NAME || 'estateGPT',
-  password: '',
+  password: process.env.DATABASE_PASSWORD || '',
   host: process.env.DATABASE_HOST || 'localhost',
   port: 5432
 });
